@@ -38,11 +38,16 @@
                         tgPulse: {
                             '0%, 100%': { boxShadow: '0 6px 20px rgba(34, 158, 217, 0.4)', transform: 'scale(1)' },
                             '50%': { boxShadow: '0 8px 32px rgba(34, 158, 217, 0.65), 0 0 0 10px rgba(34, 158, 217, 0.12)', transform: 'scale(1.03)' },
+                        },
+                        shieldGlow: {
+                            '0%, 100%': { opacity: '0.5', filter: 'drop-shadow(0 0 2px rgba(0, 85, 255, 0.4))' },
+                            '50%': { opacity: '1', filter: 'drop-shadow(0 0 16px rgba(0, 85, 255, 1))' },
                         }
                     },
                     animation: {
                         waPulse: 'waPulse 2.5s ease-in-out infinite',
                         tgPulse: 'tgPulse 2.5s ease-in-out infinite',
+                        shieldGlow: 'shieldGlow 2s ease-in-out infinite',
                     }
                 }
             }
@@ -71,7 +76,7 @@
     <script type="text/babel" data-type="module">
         import React, { useState } from 'react';
         import { createRoot } from 'react-dom/client';
-        import { Search, User, Shield, Users, Key, Bell, Plus, MapPin, Map, PlayCircle, Menu, X, MousePointer2 } from 'lucide-react';
+        import { Search, User, Shield, Users, Key, Bell, Plus, MapPin, Map, PlayCircle, Menu, X, MousePointer2, ArrowUp } from 'lucide-react';
 
         // --- COMPONENTS ---
 
@@ -97,8 +102,8 @@
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-20 gap-2">
                             {/* Logo */}
-                            <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                                <Shield className="w-8 h-8 text-brand-blue" />
+                            <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                                <Shield className="w-8 h-8 text-brand-blue animate-shieldGlow" />
                                 <span className="font-display font-bold text-xl sm:text-2xl tracking-wide text-white">TSZ</span>
                             </div>
 
@@ -142,9 +147,7 @@
         };
 
         const Hero = () => {
-            const [isPlaying, setIsPlaying] = useState(false);
             const [selectedImg, setSelectedImg] = useState(null);
-            const videoRef = React.useRef(null);
 
             const openImg = (src) => {
                 setSelectedImg(src);
@@ -170,22 +173,11 @@
                 return () => window.removeEventListener('popstate', handlePopState);
             }, [selectedImg]);
 
-            const togglePlay = () => {
-                if (videoRef.current) {
-                    if (isPlaying) {
-                        videoRef.current.pause();
-                    } else {
-                        videoRef.current.play();
-                    }
-                    setIsPlaying(!isPlaying);
-                }
-            };
-
             return (
                 <section className="relative pt-24 pb-20 lg:pt-32 lg:pb-32 overflow-hidden border-b border-gray-800">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-10">
                         <div className="flex flex-col gap-12">
-                            {/* Main Content Grid: Text and Video */}
+                            {/* Main Content Grid: Text and Primary Image */}
                             <div className="grid lg:grid-cols-2 gap-12 items-center">
                                 {/* Text Content (The "adjunta") */}
                                 <div className="order-1">
@@ -201,32 +193,18 @@
                                     </p>
                                 </div>
 
-                                <div className="order-2 group cursor-pointer" onClick={togglePlay}>
+                                <div className="order-2 group cursor-pointer" onClick={() => openImg("2.jpg")}>
                                     <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-brand-card ring-1 ring-white/5 hover:ring-brand-blue/50 transition-all duration-300">
-                                        <video
-                                            ref={videoRef}
-                                            loop
-                                            playsInline
-                                            className={`w-full h-full object-cover transition-opacity duration-500 ${isPlaying ? 'opacity-100' : 'opacity-60'}`}
-                                        >
-                                            <source src="Solar.mp4" type="video/mp4" />
-                                        </video>
-
-                                        <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md p-2 rounded-xl border border-white/10 opacity-70 group-hover:opacity-100 transition-all transform group-hover:scale-110">
-                                            <MousePointer2 className="w-5 h-5 text-white" />
+                                        <div className="absolute inset-0 bg-brand-blue/20 opacity-0 group-hover:opacity-100 transition duration-300 z-10 flex items-center justify-center">
+                                            <Search className="text-white w-10 h-10 scale-50 group-hover:scale-100 transition-transform duration-300" />
                                         </div>
-
-                                        {!isPlaying && (
-                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                                <PlayCircle className="w-16 h-16 text-white/40 animate-pulse" />
-                                            </div>
-                                        )}
+                                        <img src="2.jpg" alt="" className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition duration-500" />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-3 gap-4 lg:gap-8 order-3">
-                                {["9.jpeg", "10.jpeg", "11.jpeg"].map((src, i) => (
+                                {["14.jpg", "15.jpg", "16.jpg"].map((src, i) => (
                                     <div key={i} className="relative cursor-pointer overflow-hidden rounded-xl border border-gray-800 shadow-lg group" onClick={() => openImg(src)}>
                                         <div className="absolute inset-0 bg-brand-blue/20 opacity-0 group-hover:opacity-100 transition duration-300 z-10 flex items-center justify-center">
                                             <Search className="text-white w-6 h-6 scale-50 group-hover:scale-100 transition-transform duration-300" />
@@ -308,16 +286,10 @@
                 return () => window.removeEventListener('popstate', handlePopState);
             }, [selectedImage]);
 
-            const images = [
-                "CONS (1).jpg",
-                "CONS (2).jpg",
-                "CONS (3).jpg",
-                "IA 1.jpg",
-                "IA 2.jpg",
-                "IA 3.jpg",
-                "GAMER 1.jpg",
-                "GAMER 2.jpg",
-                "GAMER 3.jpg"
+            const imageGroups = [
+                { title: "DE CONSUMO", images: ["CONS (1).jpg", "CONS (2).jpg", "CONS (3).jpg"] },
+                { title: "INTELIGENCIA ARTIFICIAL", images: ["IA 1.jpg", "IA 2.jpg", "IA 3.jpg"] },
+                { title: "GAMERS", images: ["GAMER 4.jpg", "GAMER 2.jpg", "GAMER 3.jpg"] }
             ];
 
             return (
@@ -327,7 +299,7 @@
                             <div className="text-center lg:text-left lg:w-2/3">
                                 <div className="mb-2 text-brand-blue text-sm font-semibold tracking-wider uppercase">TECNOLOGÍA</div>
                                 <h2 className="font-display font-bold text-4xl leading-tight text-white mb-6">
-                                    Equipos de Cómputo Consumo, Gamers y con IA
+                                    Equipos de Cómputo
                                 </h2>
                                 <p className="text-gray-400 max-w-2xl mx-auto lg:mx-0">
                                     Obtenga potencia informática especializada para sus necesidades con la capacidad de ejecutar proyectos específicos al alcance de su economía
@@ -352,16 +324,24 @@
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                            {images.map((src, idx) => (
-                                <div key={idx} className="relative aspect-video rounded-xl overflow-hidden cursor-pointer border border-gray-800 shadow-lg group" onClick={() => openImg(src)}>
-                                    <div className="absolute inset-0 bg-brand-blue/20 opacity-0 group-hover:opacity-100 transition duration-300 z-10 flex items-center justify-center">
-                                        <Search className="text-white w-8 h-8 scale-50 group-hover:scale-100 transition-transform duration-300" />
-                                    </div>
-                                    <img src={src} alt={`Tecnología ${idx + 1}`} className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" />
+                        {imageGroups.map((group, groupIdx) => (
+                            <div key={groupIdx} className="mb-12 last:mb-0">
+                                <h4 className="text-brand-blue font-semibold tracking-wider uppercase mb-6 text-sm flex items-center gap-2">
+                                    <span className="w-8 h-1 bg-brand-blue block"></span>
+                                    {group.title}
+                                </h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                                    {group.images.map((src, idx) => (
+                                        <div key={idx} className="relative aspect-video rounded-xl overflow-hidden cursor-pointer border border-gray-800 shadow-lg group" onClick={() => openImg(src)}>
+                                            <div className="absolute inset-0 bg-brand-blue/20 opacity-0 group-hover:opacity-100 transition duration-300 z-10 flex items-center justify-center">
+                                                <Search className="text-white w-8 h-8 scale-50 group-hover:scale-100 transition-transform duration-300" />
+                                            </div>
+                                            <img src={src} alt={`${group.title} ${idx + 1}`} className="w-full h-full object-cover transform group-hover:scale-105 transition duration-500" />
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Image Modal */}
@@ -448,7 +428,7 @@
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-col lg:flex-row gap-16 items-center">
                             <div className="w-full lg:w-1/2">
-                                <img src="2.jpg" alt="" className="rounded-2xl border border-gray-800 shadow-2xl w-full max-h-[600px] object-cover" />
+                                <img src="17.jpg" alt="" className="rounded-2xl border border-gray-800 shadow-2xl w-full max-h-[600px] object-cover" />
                             </div>
                             <div className="w-full lg:w-1/2">
                                 <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-10">Respuestas a preguntas frecuentes</h2>
@@ -486,7 +466,7 @@
                         <h2 className="font-display font-bold text-3xl md:text-4xl text-white mb-6">Trabajamos en el Área Metropolitana y demás municipios de Antioquia</h2>
                     </div>
                     {/* Dark map abstraction - Simplified for Antioquia context */}
-                    <div className="max-w-6xl mx-auto h-[400px] bg-brand-card/50 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center">
+                    <div className="max-w-6xl mx-auto h-[400px] bg-brand-card/50 rounded-3xl border border-brand-blue relative overflow-hidden flex items-center justify-center">
                         <img src="Antioquia.png" alt="Mapa de Antioquia" className="w-full h-full object-contain absolute inset-0 mix-blend-overlay opacity-30 p-8" />
                         {/* Pulse point for Medellín */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-brand-blue rounded-full shadow-[0_0_20px_#0055ff] flex items-center justify-center">
@@ -502,14 +482,19 @@
             return (
                 <footer className="bg-black py-12 border-t border-gray-800">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div className="flex items-center gap-2">
-                            <Shield className="w-6 h-6 text-brand-blue" />
+                        <div className="flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity duration-300">
+                            <Shield className="w-6 h-6 text-brand-blue animate-shieldGlow" />
                             <span className="font-display font-bold text-xl text-white">TSZ</span>
                         </div>
                         <p className="text-gray-600 text-sm">© 2026 Tecnologías TSZ. Todos los derechos reservados.</p>
-                        <div className="flex gap-4">
-                            <a href="#" className="text-gray-600 hover:text-white transition">Política de Privacidad</a>
-                            <a href="#" className="text-gray-600 hover:text-white transition">Términos de Servicio</a>
+                        <div className="mr-20 md:mr-32">
+                            <button
+                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                className="bg-brand-blue text-white p-3 rounded-full hover:bg-blue-600 transition-colors shadow-lg hover:shadow-[0_0_15px_rgba(0,85,255,0.6)] flex items-center justify-center transform hover:-translate-y-1"
+                                aria-label="Volver arriba"
+                            >
+                                <ArrowUp className="w-5 h-5" />
+                            </button>
                         </div>
                     </div>
                 </footer>
@@ -528,10 +513,10 @@
                     </a>
                     <a href="https://t.me/+573113373678" target="_blank" rel="noopener noreferrer"
                         className="flex items-center justify-center w-[56px] h-[56px] rounded-full bg-[#229ED9] text-white shadow-[0_6px_24px_rgba(34,158,217,0.45)] hover:-translate-y-1.5 hover:scale-105 transition-all duration-300 animate-tgPulse hover:animate-none group"
-                        style={{animationDelay: '0.6s'}}
+                        style={{ animationDelay: '0.6s' }}
                         aria-label="Contactar por Telegram">
                         <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
                         </svg>
                     </a>
                 </div>
